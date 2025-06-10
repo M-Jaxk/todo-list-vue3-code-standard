@@ -13,7 +13,15 @@ export let useListStore = defineStore('store', {
       let list = await import('@/list.json')
       this.$state = list.default
       this.loading = false
-      //   console.log('ListStore: fill', this.$state)
+    },
+    findObjectById(id) {
+      let { errorFlash } = useFlash()
+      const index = this.todos.findIndex((t) => t.id === id)
+      if (index === -1) {
+        errorFlash('Todo not found.')
+        return
+      }
+      return this.todos.find((todo) => todo.id === id)
     },
     addTodo(todo) {
       let { successFlash, errorFlash } = useFlash()
@@ -29,12 +37,19 @@ export let useListStore = defineStore('store', {
       this.newTask = ''
       successFlash('Todo added successfully!')
     },
-    editTodo(todo) {
+    updateTodo(updatedTodo) {
       let { successFlash, errorFlash } = useFlash()
-      if (!todo || todo.trim() === '') {
+      if (!updatedTodo || updatedTodo.task.trim() === '') {
         errorFlash('Please enter a valid todo item.')
         return
       }
+      const index = this.todos.findIndex((t) => t.id === updatedTodo.id)
+      if (index === -1) {
+        errorFlash('Todo not found.')
+        return
+      }
+      this.todos[index] = { ...this.todos[index], ...updatedTodo }
+      successFlash('Todo updated successfully!')
     },
     deleteTodo(id) {
       let { successFlash, errorFlash } = useFlash()

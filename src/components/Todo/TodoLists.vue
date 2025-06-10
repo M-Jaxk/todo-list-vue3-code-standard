@@ -10,7 +10,7 @@
       v-for="todo in listStore.todos"
       :key="todo.id"
       :todo="todo"
-      @edit="listStore.editTodo(todo.id)"
+      @edit="goToEdit(todo.id)"
       @delete="listStore.deleteTodo(todo.id)"
     />
     <p v-show="!listStore.todos.length && !listStore.loading" class="text-center text-red-400">
@@ -21,10 +21,17 @@
 
 <script setup>
 import TodoList from '@/components/Todo/TodoList.vue'
+import { useRouter } from 'vue-router'
 import { useListStore } from '@/stores/ListStore'
 import { onMounted } from 'vue'
 
+const router = useRouter()
 const listStore = useListStore()
+
+const goToEdit = (id) => {
+  router.push({ name: 'edit', params: { id } })
+}
+
 onMounted(() => {
   if (!listStore.todos.length) {
     listStore.fill()
